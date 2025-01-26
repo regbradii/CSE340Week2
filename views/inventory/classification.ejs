@@ -1,0 +1,9 @@
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/')
+    } %>
+
+<%# messages() %> <!-- This is a partial that will display any messages that are passed to it. -->
+
+<%- grid %>
