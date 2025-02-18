@@ -57,4 +57,43 @@ Util.buildClassificationGrid = async function(data){
     return grid
   }
 
+Util.buildVehiclePage = async function(data){
+  let vehicle = data
+  let page = '<p class="price">$' + new Intl.NumberFormat('en-US').format(vehicle.price) + '</p>'
+  page += '<img src="' + vehicle.image + '" alt="Image of ' + vehicle.make + ' ' + vehicle.model + ' on CSE Motors" />'
+  page += '<p>' + vehicle.description + '</p>'
+  page += '<ul>'
+  page += '<li><strong>Color:</strong> ' + vehicle.color + '</li>'
+  page += '<li><strong>Year:</strong> ' + vehicle.year + '</li>'
+  page += '<li><strong>Mileage:</strong> ' + vehicle.miles + '</li>'
+  page += '</ul>'
+  return page
+}
+
+Util.buildClassificationList = async function (classification_id = null) {
+  let data = await invModel.getClassifications()
+  let classificationList =
+    '<select name="id" id="classificationList" required>'
+  classificationList += "<option value=''>Choose a Classification</option>"
+  data.rows.forEach((row) => {
+    classificationList += '<option value="' + row.id + '"'
+    if (
+      classification_id != null &&
+      row.id == classification_id
+    ) {
+      classificationList += " selected "
+    }
+    classificationList += ">" + row.name + "</option>"
+  })
+  classificationList += "</select>"
+  return classificationList
+}
+
+  /* ****************************************
+ * Middleware For Handling Errors
+ * Wrap other function in this for 
+ * General Error Handling
+ **************************************** */
+Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+
 module.exports = Util
