@@ -1,0 +1,40 @@
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/')
+    } %>
+
+<%- messages() %>
+
+<% if (errors) { %>
+    <ul class="notice">
+   <% errors.array().forEach(error => { %>
+     <li><%= error.msg %></li>
+  <%  }) %>
+    </ul>
+   <% } %>
+
+<form id="deleteForm" method="post" action="/inv/delete">
+    <!-- Make, Model, Year, Description, image, thumbnail, price, miles, color-->
+    <div>
+        <label for="make">Make</label>
+        <input type="text" id="make" name="make" required readonly value="<%= locals.data.make %>">
+    </div>
+    <div>
+        <label for="model">Model</label>
+        <input type="text" id="model" name="model" required readonly value="<%= locals.data.model %>">
+    </div>
+    <div>
+        <label for="year">Year</label>
+        <input type="number" id="year" name="year" minlength="4" maxlength="4" required readonly value="<%= locals.data.year %>">
+    </div>
+    <div>
+        <label for="price">Price</label>
+        <input type="number" id="price" name="price" required readonly value="<%= locals.data.price %>">
+    </div>
+    <p>Confirm Deletion - The delete is permanent.</p>
+    <input type="hidden" name="id" <% if(locals.data.id) { %> value="<%= locals.data.id %>"<% } %>>
+    <div>
+        <button type="submit" >Delete Inventory</button>
+    </div>
+</form>

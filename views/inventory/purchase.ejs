@@ -1,0 +1,28 @@
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/') 
+    } %> 
+<%- messages() %> 
+
+<% if (errors) { %> 
+    <ul class="notice"> 
+   <% errors.array().forEach(error => { %> 
+     <li><%= error.msg %></li> 
+  <%  }) %> 
+    </ul> 
+<% } %>
+
+<form method="post" action="/inv/purchase">
+    <div>Price: <%= price %></div>
+    <input type="hidden" name="vehicle_id" id="vehicle_id" value="<%=vehicle_id%>">
+    <div>First Name: <%=locals.accountData.firstname %></div>
+    <div>Last Name: <%=locals.accountData.lastname%></div>
+    <div>
+        <label for="downpayment">Down Payment</label>
+        <input type="number" id="downpayment" name="downpayment" required>
+    </div>
+    <div>
+        <button type="submit">Purchase Vehicle</button>
+    </div>
+</form>

@@ -238,3 +238,31 @@ INSERT INTO public.account (firstname, lastname, email, password, type) VALUES
 ('John', 'Doe', 'john.doe@example.com', 'password123', 'Client'),
 ('Jane', 'Smith', 'jane.smith@example.com', 'password456', 'Employee'),
 ('Admin', 'User', 'admin@example.com', 'adminpassword', 'Admin');
+
+
+-- Table structure for purchase
+CREATE TABLE IF NOT EXISTS public.purchase
+(
+    accountid integer NOT NULL,
+    inventoryid integer NOT NULL,
+    purchasedate date NOT NULL DEFAULT CURRENT_DATE,
+    downpayment numeric(9,0) NOT NULL,
+    CONSTRAINT purchase_pkey PRIMARY KEY (accountid, inventoryid, purchasedate)
+    
+);-- Table structure for purchase
+CREATE TABLE IF NOT EXISTS public.purchase
+(
+    accountid integer NOT NULL,
+    inventoryid integer NOT NULL,
+    purchasedate date NOT NULL DEFAULT CURRENT_DATE,
+    downpayment numeric(9,0) NOT NULL,
+    CONSTRAINT purchase_pkey PRIMARY KEY (accountid, inventoryid, purchasedate),
+    CONSTRAINT fk_account FOREIGN KEY (accountid)
+        REFERENCES public.account (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_inventory FOREIGN KEY (inventoryid)
+        REFERENCES public.inventory (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE NO ACTION
+);

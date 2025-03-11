@@ -1,7 +1,11 @@
-<% if (title) { %>
-    <h1><%= title %></h1>
-    <% } else {
-      res.redirect('/')
-    } %>
-
+<div class="vehicle-detail-header">
+  <% if (title) { %>
+      <h1><%= title %></h1>
+      <% } else {
+        res.redirect('/')
+      } %>
+  <% if (locals.accountData && locals.accountData.type === 'Client' ) { %>
+  <a class="purchase-button" href="/inv/purchase-vehicle/<%=vehicle_id%>" >Purchase</a>
+  <% } %>
+  </div>
 <%- info %>

@@ -1,6 +1,15 @@
 <header>
     <div>
         <a href="/" title="Return to home page">CSE Motors</a>
-        <a title="Click to log in" href="/account/login">My Account</a>
+        <% if (!locals.accountData) { %>
+            <a title="Click to log in" href="/account/login">My Account</a>
+        <% } else { %>
+            <h2>Welcome, <%= locals.accountData.firstname %></h2>
+            <p class="menu"><a href="/account" title="View Account Information" >Update Account Information</a></p>
+            <% if (locals.accountData.type === 'Admin' || locals.accountData.type === 'Employee') { %>
+                <p><a href="/inv/management" title="Manage Inventory">Manage</a></p>
+            <% } %>
+            <a title="Click to log out" href="/account/logout">Logout</a>
+        <% } %>
     </div>
 </header>

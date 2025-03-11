@@ -1,0 +1,53 @@
+<% if (title) { %>
+  <h1><%= title %></h1>
+<% } else {
+  res.redirect('/')
+} %>
+
+<%- messages() %>
+
+<% if (errors) { %>
+  <ul class="notice">
+    <% errors.array().forEach(error => { %>
+      <li><%= error.msg %></li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<% if (accountData) { %>
+  <% if (locals.accountData && locals.accountData.type === 'Client' ) { %>
+    <div style="text-align: center;">
+      <a class="purchase-button" href="/inv/view">View Purchases</a>
+    </div>
+  <% } %>
+  <form action="/account/updatePersonalInfo" method="POST">
+    <input type="hidden" name="id" id="id" value="<%= accountData.id %>">
+    <div>
+      <label for="firstname"><strong>First Name:</strong></label>
+      <input type="text" id="firstname" name="firstname" value="<%= accountData.firstname %>">
+    </div>
+    <div>
+      <label for="lastname"><strong>Last Name:</strong></label>
+      <input type="text" id="lastname" name="lastname" value="<%= accountData.lastname %>">
+    </div>
+    <div>
+      <label for="email"><strong>Email:</strong></label>
+      <input type="email" id="email" name="email" value="<%= accountData.email %>">
+    </div>
+    <div>
+      <button type="submit">Update Personal Info</button>
+    </div>
+  </form>
+
+  <form action="/account/updatePassword" method="POST">
+    <input type="hidden" name="id" id="id" value="<%= accountData.id %>">
+    <div>
+      <label for="password"><strong>Password:</strong></label>
+      <input type="password" id="password" name="password" value="">
+    </div>
+    <div>
+      <button type="submit">Update Password</button>
+    </div>
+  </form>
+<% } %>
+

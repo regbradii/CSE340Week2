@@ -5,19 +5,6 @@ const accountModel = require("../models/account-model")
 
 
 const sharedRules = [ 
-  // valid email is required and cannot already exist in the database
-  body("email")
-  .trim()
-  .isEmail()
-  .normalizeEmail() // refer to validator.js docs
-  .withMessage("A valid email is required.")
-  .custom(async (email) => {
-    const emailExists = await accountModel.checkExistingEmail(email)
-    if (emailExists){
-        throw new Error("Email exists. Please log in or use different email")
-    }
-  }),
-
   // password is required and must be strong password
   body("password")
   .trim()
@@ -31,37 +18,81 @@ const sharedRules = [
   })
   .withMessage("Password does not meet requirements."),
 ] 
+
+const nameRules = [
+  // firstname is required and must be string
+  body("firstname")
+  .trim()
+  .escape()
+  .notEmpty()
+  .isLength({ min: 1 })
+  .withMessage("Please provide a first name."), // on error this message is sent.
+
+// lastname is required and must be string
+body("lastname")
+  .trim()
+  .escape()
+  .notEmpty()
+  .isLength({ min: 2 })
+  .withMessage("Please provide a last name.") // on error this message is sent.
+]
 /*  **********************************
   *  Registration Data Validation Rules
   * ********************************* */
 validate.registrationRules = () => {
     return [
-      // firstname is required and must be string
-      body("firstname")
+      ...nameRules,
+      body("email")
         .trim()
-        .escape()
-        .notEmpty()
-        .isLength({ min: 1 })
-        .withMessage("Please provide a first name."), // on error this message is sent.
-  
-      // lastname is required and must be string
-      body("lastname")
-        .trim()
-        .escape()
-        .notEmpty()
-        .isLength({ min: 2 })
-        .withMessage("Please provide a last name."), // on error this message is sent.
-  
+        .isEmail()
+        .normalizeEmail() // refer to validator.js docs
+        .withMessage("A valid email is required.")
+        .custom(async (email) => {
+          const emailExists = await accountModel.checkExistingEmail(email)
+          if (emailExists){
+              throw new Error("Email exists. Please log in or use different email")
+          }
+        }),
       // shared rules
       ...sharedRules
     ]
   }
 
   /*  **********************************
+  *  Update Data Validation Rules
+  * ********************************* */
+validate.updateRules = () => {
+  return [
+    ...nameRules,
+      body("email")
+        .trim()
+        .isEmail()
+        .normalizeEmail() // refer to validator.js docs
+        .withMessage("A valid email is required.")
+        .custom(async (email, { req }) => {
+          const id = parseInt(req.body.id, 10);
+          const emailExists = await accountModel.checkExistingEmail(email, id)
+          if (emailExists){
+              throw new Error("Email exists. Please log in or use different email")
+          }
+        })
+  ]
+}
+
+validate.passwordRules = () => {
+  return sharedRules
+}
+
+  /*  **********************************
   *  Login Data Validation Rules
   * ********************************* */
 validate.loginRules = () => {
   return [
+    body("email")
+        .trim()
+        .isEmail()
+        .normalizeEmail() // refer to validator.js docs
+        .withMessage("A valid email is required."),
     // shared rules
     ...sharedRules
   ]
@@ -104,6 +135,51 @@ validate.checkLoginData = async (req, res, next) => {
       nav,
       email,
       password
+    })
+    return
+  }
+  next()
+}
+
+validate.checkUpdateData = async (req, res, next) => {
+  let errors = []
+  errors = validationResult(req)
+  const { firstname, lastname, email, password, id  } = req.body
+  let accountData = {
+    firstname,
+    lastname,
+    email,
+    password,
+    id
+  }
+  if (!errors.isEmpty()) {
+    let nav = await utilities.getNav()
+    res.render("account/index", {
+      title: "Account Management",
+      nav,
+      errors: errors,
+      accountData
+    })
+    return
+  }
+  next()
+}
+
+validate.checkPasswordData = async (req, res, next) => {
+  let errors = []
+  errors = validationResult(req)
+  const { password, id  } = req.body
+  let accountData = {
+    password,
+    id
+  }
+  if (!errors.isEmpty()) {
+    let nav = await utilities.getNav()
+    res.render("account/index", {
+      title: "Account Management",
+      nav,
+      errors: errors,
+      accountData
     })
     return
   }

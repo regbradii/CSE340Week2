@@ -1,0 +1,65 @@
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/')
+    } %>
+
+<%- messages() %>
+
+<% if (errors) { %>
+    <ul class="notice">
+   <% errors.array().forEach(error => { %>
+     <li><%= error.msg %></li>
+  <%  }) %>
+    </ul>
+   <% } %>
+
+<form id="updateForm" method="post" action="/inv/update">
+    <div>
+        <label for="classification">Classification</label>
+        <%- classifications %>
+    </div>
+    <!-- Make, Model, Year, Description, image, thumbnail, price, miles, color-->
+    <div>
+        <label for="make">Make</label>
+        <input type="text" id="make" name="make" required value="<%= locals.data.make %>">
+    </div>
+    <div>
+        <label for="model">Model</label>
+        <input type="text" id="model" name="model" required value="<%= locals.data.model %>">
+    </div>
+    <div>
+        <label for="year">Year</label>
+        <input type="number" id="year" name="year" minlength="4" maxlength="4" required value="<%= locals.data.year %>">
+    </div>
+    <div>
+        <label for="description">Description</label>
+        <textarea id="description" name="description" required ><%= locals.data.description %></textarea>
+    </div>
+    <div>
+        <label for="image">Image</label>
+        <input type="text" id="image" name="image" required value="<%= locals.data.image %>">
+    </div>
+    <div>
+        <label for="thumbnail">Thumbnail</label>
+        <input type="text" id="thumbnail" name="thumbnail" required value="<%= locals.data.thumbnail %>">
+    </div>
+    <div>
+        <label for="miles">Miles</label>
+        <input type="number" id="miles" name="miles" required value="<%= locals.data.miles %>">
+    </div>
+    <div>
+        <label for="color">Color</label>
+        <input type="text" id="color" name="color" required value="<%= locals.data.color %>">
+    </div>
+    <div>
+        <label for="price">Price</label>
+        <input type="number" id="price" name="price" required value="<%= locals.data.price %>">
+    </div>
+    <input type="hidden" name="id" <% if(locals.data.id) { %> value="<%= locals.data.id %>"
+    <% } %>>
+    <div>
+        <button type="submit" disabled>Update Inventory</button>
+    </div>
+</form>
+<script src="/js/inv-update.js"></script>

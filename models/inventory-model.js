@@ -49,7 +49,6 @@ async function addClassification(classification){
 }
 
 async function addInventory(vehicle){
-  console.log('Make: ', vehicle.make, 'Model: ', vehicle.model, 'Year: ', vehicle.year, 'Description: ', vehicle.description, 'Image: ', vehicle.image, 'Thumbnail: ', vehicle.thumbnail, 'Price: ', vehicle.price, 'Miles: ', vehicle.miles, 'Color: ', vehicle.color, 'Classification ID: ', vehicle.id)
   try {
     const sql = "INSERT INTO public.inventory(make, model, year, description, image, thumbnail, price, miles, color, classification_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *"
     return await pool.query(sql, [vehicle.make, vehicle.model, vehicle.year, vehicle.description, vehicle.image, vehicle.thumbnail, vehicle.price, vehicle.miles, vehicle.color, vehicle.id])
@@ -57,5 +56,75 @@ async function addInventory(vehicle){
     return error.message
   }
 }
+/* ***************************
+ *  Update Inventory Data
+ * ************************** */
+async function updateInventory(
+  id,
+  make,
+  model,
+  description,
+  image,
+  thumbnail,
+  price,
+  year,
+  miles,
+  color,
+  classification_id
+) {
+  try {
+    const sql =
+      "UPDATE public.inventory SET make = $1, model = $2, description = $3, image = $4, thumbnail = $5, price = $6, year = $7, miles = $8, color = $9, classification_id = $10 WHERE id = $11 RETURNING *"
+    const data = await pool.query(sql, [
+      make,
+      model,
+      description,
+      image,
+      thumbnail,
+      price,
+      year,
+      miles,
+      color,
+      classification_id,
+      id
+    ])
+    return data.rows[0]
+  } catch (error) {
+    console.error("model error: " + error)
+  }
+}
 
-module.exports = {getClassifications, getInventoryByClassificationId, getVehicleById, addClassification, addInventory};
+async function deleteInventory(id){
+  try {
+    const sql = "DELETE FROM public.inventory WHERE id = $1"
+    return await pool.query(sql, [id])
+  } catch (error) {
+    return error.message
+  }
+}
+
+async function recordPurchase(vehicle_id, account_id, down_payment) {
+  console.log("vehicle_id: " + vehicle_id)
+  console.log("account_id: " + account_id)
+  console.log("down_payment: " + down_payment)
+  try {
+    const sql = "INSERT INTO public.purchase (inventoryid, accountid, downpayment) VALUES ($1, $2, $3) RETURNING *"
+    return await pool.query(sql, [vehicle_id, account_id, down_payment])
+  } catch (error) {
+    return error.message
+  }
+}
+
+async function getVehiclePurchases(account_id){
+  try {
+    const
+    sql = "SELECT * FROM public.purchase p JOIN public.inventory i on p.inventoryid = i.id Where p.accountid = $1"
+    const data = await pool.query(sql, [account_id])
+    return data.rows
+  }
+  catch (error) {
+    return error.message
+  }
+}
+
+module.exports = {getClassifications, getInventoryByClassificationId, getVehicleById, addClassification, addInventory, updateInventory, deleteInventory, recordPurchase, getVehiclePurchases};

@@ -32,9 +32,9 @@ validate.checkClassificationRules = async (req, res, next) => {
     next()
   }
 
-  validate.inventoryRules = () => {
+validate.inventoryRules = () => {
     return [
-        body("id")
+        body("classification_id")
         .trim()
         .notEmpty()
         .isNumeric()
@@ -93,6 +93,17 @@ validate.checkClassificationRules = async (req, res, next) => {
     ]
 };
 
+validate.inventoryUpdateRules = () => {
+  return [
+      body("id")
+      .trim()
+      .notEmpty()
+      .isLength({ min: 1 })
+      .withMessage("Please provide an id."),
+      ...validate.inventoryRules()
+  ]
+};
+
 validate.checkClassificationRules = async (req, res, next) => {
     const { name } = req.body
     let errors = []
@@ -110,8 +121,8 @@ validate.checkClassificationRules = async (req, res, next) => {
     next()
   }
 
-  validate.checkInventoryRules = async (req, res, next) => {
-    const { make, model, year, price, description, image, thumbnail, miles, color, id} = req.body
+validate.checkInventoryRules = async (req, res, next) => {
+    const { make, model, year, price, description, image, thumbnail, miles, color, classification_id} = req.body
     let errors = []
     errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -129,11 +140,55 @@ validate.checkClassificationRules = async (req, res, next) => {
         thumbnail,
         miles,
         color,
-        id
+        classification_id
       })
       return
     }
     next()
   }
 
-module.exports = validate
+validate.checkUpdateRules = async (req, res, next) => {
+    const { make, model, year, price, description, image, thumbnail, miles, color, id, classification_id} = req.body
+    let errors = []
+    errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      let nav = await utilities.getNav()
+      res.render("inventory/edit-inventory", {
+        errors,
+        title: "Edit Inventory",
+        nav,
+        make,
+        model,
+        year,
+        price,
+        description,
+        image,
+        thumbnail,
+        miles,
+        color,
+        id,
+        classification_id
+      })
+      return
+    }
+    next()
+  }
+
+// Middleware to check for  account type
+validate.checkAdmin = async (req, res, next) => {
+    const accountData = res.locals.accountData;
+    if (accountData && (accountData.type === 'Admin' || accountData.type === 'Employee')) {
+        next();
+    } else {
+      const errors = validationResult(req);
+        errors.errors.push({ msg: "You are not authorized to view this page." });
+      let nav = await utilities.getNav()
+      res.render("account/login", {
+        errors,
+        title: "Login",
+        nav,
+    })
+  }
+}
+
+module.exports = validate;

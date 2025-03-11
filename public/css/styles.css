@@ -39,7 +39,7 @@ header a {
     font-size: 1.2em;
 }
 
-#cookie {
+.menu {
     align-self: center;
 }
 
@@ -186,8 +186,6 @@ a figure {
     margin: 0;
 }
 
-
-
 figure img {
     display: block;
     margin: auto;
@@ -212,7 +210,6 @@ section h2,
 h1 {
     margin-left: .25em;
 }
-
 
 #belowactionbtn {
     display: block;
@@ -293,6 +290,42 @@ form button:hover {
 
 form .form-footer {
     text-align: center;
+}
+.vehicle-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1em;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+}
+
+.vehicle-detail-header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.vehicle-detail-header .purchase-button {
+    margin: 0;
+}
+.purchase-button {
+    display: inline-block;
+    margin-left: auto;
+    padding: 10px 20px;
+    background-color: #4c96d7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none; /* Remove underline */
+}
+
+.purchase-button:hover {
+    background-color: #3a7bbf;
+    opacity: 0.8;
 }
 
 @media only screen and (min-width: 768px) {
